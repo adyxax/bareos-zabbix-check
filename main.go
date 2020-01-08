@@ -118,7 +118,7 @@ func main() {
 	}
 	// we write this new spool
 	if err2 := saveSpool(successfulJobs); err2 != nil {
-		fmt.Printf("AVERAGE: Couldn't save spool : %s\n", err2)
+		fmt.Printf("AVERAGE: Error saving the spool file : %s\n", err2)
 		os.Exit(0)
 	}
 

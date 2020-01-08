@@ -20,12 +20,12 @@ func loadSpool() (entries jobs, err error) {
 	// We read the spool
 	file, err = os.Open(path.Join(workDir, spoolFile))
 	if err != nil {
-		return nil, fmt.Errorf("INFO Couldn't open spool file: %s", err)
+		return nil, fmt.Errorf("Couldn't open spool file, starting from scratch: %s", err)
 	}
 	defer file.Close()
 	lines, err = csv.NewReader(file).ReadAll()
 	if err != nil {
-		return nil, fmt.Errorf("INFO Corrupted spool file : %s", err)
+		return nil, fmt.Errorf("Corrupted spool file, starting from scratch : %s", err)
 	}
 	if verbose {
 		log.Printf("Spool file content : %v\n", lines)
@@ -33,12 +33,10 @@ func loadSpool() (entries jobs, err error) {
 
 	entries = make(map[string]uint64)
 	for _, line := range lines {
-		var (
-			i int
-		)
+		var i int
 		i, err = strconv.Atoi(line[1])
 		if err != nil {
-			return nil, fmt.Errorf("INFO Corrupted spool file : couldn't parse timestamp entry")
+			return nil, fmt.Errorf("Corrupted spool file : couldn't parse timestamp entry")
 		}
 		entries[line[0]] = uint64(i)
 	}
@@ -55,7 +53,7 @@ func saveSpool(entries jobs) (err error) {
 	)
 	file, err = os.Create(path.Join(workDir, spoolFile))
 	if err != nil {
-		return fmt.Errorf("INFO Couldn't open spool file for writing : %s", err)
+		return
 	}
 	defer file.Close()
 

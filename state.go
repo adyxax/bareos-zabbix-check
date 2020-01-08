@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"time"
 )
 
 // stateFileHeader : A structure to hold the header of the state file. It is statically aligned for amd64 architecture
@@ -47,8 +48,8 @@ func (je jobEntry) String() string {
 	if len(matches) >= 4 {
 		jobNameLen = matches[3]
 	}
-	return fmt.Sprintf("Errors: %d, JobType: %c, JobStatus: %c, JobLevel: %c, JobID: %d, VolSessionID: %d, VolSessionTime: %d, JobFiles: %d, JobBytes: %d, StartTime: %d, EndTime: %d, Job: %s",
-		je.Errors, je.JobType, je.JobStatus, je.JobLevel, je.JobID, je.VolSessionID, je.VolSessionTime, je.JobFiles, je.JobBytes, je.StartTime, je.EndTime, je.Job[:jobNameLen])
+	return fmt.Sprintf("Errors: %d, JobType: %c, JobStatus: %c, JobLevel: %c, JobID: %d, VolSessionID: %d, VolSessionTime: %d, JobFiles: %d, JobBytes: %d, StartTime: %s, EndTime: %s, Job: %s",
+		je.Errors, je.JobType, je.JobStatus, je.JobLevel, je.JobID, je.VolSessionID, je.VolSessionTime, je.JobFiles, je.JobBytes, time.Unix(int64(je.StartTime), 0), time.Unix(int64(je.EndTime), 0), je.Job[:jobNameLen])
 }
 
 const (
@@ -63,15 +64,14 @@ const (
 var jobNameRegex = regexp.MustCompilePOSIX(`^([-A-Za-z0-9_]+)\.[0-9]{4}-[0-9]{2}-[0-9]{2}.*`)
 
 // readNextBytes : Reads the next "number" bytes from a "file", returns the number of bytes actually read as well as the bytes read
-func readNextBytes(file *os.File, number int) (int, []byte) {
-	var bytes = make([]byte, number)
-
-	var n, err = file.Read(bytes)
+func readNextBytes(file *os.File, number int) (n int, bytes []byte, err error) {
+	bytes = make([]byte, number)
+	n, err = file.Read(bytes)
 	if err != nil {
-		fmt.Printf("INFO Corrupted state file : file.Read failed in %s : %s\n", stateFile, err)
+		return 0, nil, fmt.Errorf("file.Read failed in %s : %s", stateFile, err)
 	}
 
-	return n, bytes
+	return
 }
 
 func parseStateFile() (successfulJobs jobs, errorJobs jobs, err error) {
@@ -92,7 +92,10 @@ func parseStateFile() (successfulJobs jobs, errorJobs jobs, err error) {
 
 	// Parsing the state file header
 	var header stateFileHeader
-	n, data = readNextBytes(stateFileHandle, stateFileHeaderLength)
+	n, data, err = readNextBytes(stateFileHandle, stateFileHeaderLength)
+	if err != nil {
+		return nil, nil, fmt.Errorf("INFO Corrupted state file : %s", err)
+	}
 	if n != stateFileHeaderLength {
 		return nil, nil, fmt.Errorf("INFO Corrupted state file : invalid header length in %s", stateFile)
 	}
@@ -118,7 +121,10 @@ func parseStateFile() (successfulJobs jobs, errorJobs jobs, err error) {
 	stateFileHandle.Seek(int64(header.LastJobsAddr), 0)
 
 	// We read how many jobs there are in the state file
-	n, data = readNextBytes(stateFileHandle, 4)
+	n, data, err = readNextBytes(stateFileHandle, 4)
+	if err != nil {
+		return nil, nil, fmt.Errorf("INFO Corrupted state file : %s", err)
+	}
 	if n != 4 {
 		return nil, nil, fmt.Errorf("INFO Corrupted state file : invalid numberOfJobs read length in %s", stateFile)
 	}
@@ -139,7 +145,10 @@ func parseStateFile() (successfulJobs jobs, errorJobs jobs, err error) {
 			jobResult jobEntry
 			jobName   string
 		)
-		n, data = readNextBytes(stateFileHandle, jobResultLength)
+		n, data, err = readNextBytes(stateFileHandle, jobResultLength)
+		if err != nil {
+			return nil, nil, fmt.Errorf("INFO Corrupted state file : %s", err)
+		}
 		if n != jobResultLength {
 			return nil, nil, fmt.Errorf("INFO Corrupted state file : invalid job entry in %s", stateFile)
 		}
