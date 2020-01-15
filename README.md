@@ -4,6 +4,15 @@ This repository contains code for a go program that can inspect a bareos status 
 
 This program was born from a need to query the status of the backups from the client machine and report it in zabbix at my workplace. Being a zabbix check it must exit with a code 0 even when reporting errors, be warned if you intend to use it with something else than zabbix. Changing this behaviour to suit your needs should not be hard at all though.
 
+## Contents
+
+- [Dependencies](#dependencies)
+- [Building](#building)
+- [Usage](#usage)
+- [Output](#output)
+- [Spool file](#spool-file)
+- [Limitations](#limitations)
+
 ## Dependencies
 
 go is required. Only go version >= 1.13.5 on linux amd64 has been tested.
