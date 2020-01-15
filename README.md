@@ -52,6 +52,10 @@ Here is a list of the possible error messages and their meaning :
   - `INFO No jobs exist in the state file` : no jobs were found in the state file.
   - `INFO Couldn't parse job name, this shouldn't happen : %s` : the program uses a regex to strip time and date from a job entry and it did not work. This is a bug in this program! Please open an issue.
 
+## Spool file
+
+Stored in `/var/lib/bareos/bareos-zabbix-check.spool`, this spool data is a simple csv vile format where every line contains a job name and the timestamp of the last successful execution for this job.
+
 ## Limitations
 
 ### No alerts if a job fails to start on its first run
