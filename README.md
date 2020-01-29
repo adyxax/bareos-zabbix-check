@@ -85,3 +85,4 @@ Because of the way we record jobs in a spool file in order to track missing jobs
   - start the bareos file daemon again
   - run any job in order to have the file daemon recreate a valid status file
   - delete the line referencing this job in the spool file (/var/lib/bareos/bareos-zabbix-check.spool by default)
+

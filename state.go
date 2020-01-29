@@ -11,6 +11,7 @@ import (
 )
 
 // stateFileHeader : A structure to hold the header of the state file. It is statically aligned for amd64 architecture
+// This comes from bareos repository file core/src/lib/bsys.cc:525 and core/src/lib/bsys.cc:652
 type stateFileHeader struct {
 	ID                        [14]byte
 	_                         int16
@@ -26,6 +27,7 @@ func (sfh stateFileHeader) String() string {
 }
 
 // jobEntry : A structure to hold a job result from the state file
+// This comes from bareos repository file core/src/lib/recent_job_results_list.h:29 and file core/src/lib/recent_job_results_list.cc:44
 type jobEntry struct {
 	Pad            [16]byte
 	Errors         int32
