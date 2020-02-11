@@ -19,6 +19,11 @@ go is required. Only go version >= 1.13.5 on linux amd64 has been tested.
 
 ## Building
 
+To run tests, use :
+```
+go test -cover ./...
+```
+
 For a debug build, use :
 ```
 go build

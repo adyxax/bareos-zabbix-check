@@ -10,5 +10,5 @@ type Job struct {
 }
 
 func (job Job) String() string {
-	return fmt.Sprintf("Name: \"%s\", Timestamp: \"%d\", Success: \"%t\"", job.Name, job.Timestamp, job.Success)
+	return fmt.Sprintf("Job { Name: \"%s\", Timestamp: \"%d\", Success: \"%t\" }", job.Name, job.Timestamp, job.Success)
 }
