@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path"
+	"path/filepath"
 	"strconv"
 )
 
@@ -15,7 +15,7 @@ import (
 func (s *Spool) Load(c *config.Config) (err error) {
 	s.config = c
 	// We read the spool
-	file, err := os.Open(path.Join(c.WorkDir(), spoolFile))
+	file, err := os.Open(filepath.Join(c.WorkDir(), spoolFile))
 	if err != nil {
 		return fmt.Errorf("Couldn't open spool file, starting from scratch: %s", err)
 	}

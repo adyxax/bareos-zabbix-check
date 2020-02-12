@@ -4,12 +4,12 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
 )
 
 // Save writes a spool on the disk
 func (s *Spool) Save() (err error) {
-	file, err := os.Create(path.Join(s.config.WorkDir(), spoolFile))
+	file, err := os.Create(filepath.Join(s.config.WorkDir(), spoolFile))
 	if err != nil {
 		return
 	}

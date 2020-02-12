@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path"
+	"path/filepath"
 )
 
 const (
@@ -33,7 +33,7 @@ func (c *Config) checkWorkDir() {
 			}
 		}
 	}
-	c.workDir = path.Clean(c.workDir)
+	c.workDir = filepath.Clean(c.workDir)
 	if c.verbose {
 		log.Println("Setting work directory to ", c.workDir)
 	}
