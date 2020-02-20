@@ -18,6 +18,7 @@ func KeepOldestOnly(jobs []Job) []Job {
 
 // KeepSuccessOnly returns only the successful jobs from a job list (suiatble to write a new spool file)
 func KeepSuccessOnly(jobs []Job) (result []Job) {
+	result = make([]Job, 0)
 	for _, job := range jobs {
 		if job.Success {
 			result = append(result, job)

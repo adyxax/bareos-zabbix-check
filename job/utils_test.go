@@ -1,38 +1,62 @@
 package job
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestKeepOldestOnly(t *testing.T) {
-	t.Run("test empty list", func(t *testing.T) {
-		var jobs []Job
-		if len(KeepOldestOnly(jobs)) != 0 {
-			t.Error("empty list failed")
-		}
-	})
-	t.Run("test functionality", func(t *testing.T) {
-		var jobs []Job
-		jobs = append(jobs, Job{Name: "a", Timestamp: 10, Success: true})
-		jobs = append(jobs, Job{Name: "a", Timestamp: 20, Success: true})
-		jobs2 := KeepOldestOnly(jobs)
-		if len(jobs2) != 1 || jobs2[0].Timestamp != 20 {
-			t.Error("functionality failed")
-		}
-	})
+	emptyList := []Job{}
+	oneJob := []Job{{Name: "a", Timestamp: 10, Success: true}}
+	twoJobs := []Job{
+		{Name: "a", Timestamp: 10, Success: true},
+		{Name: "a", Timestamp: 5, Success: true},
+	}
+	type args struct {
+		jobs []Job
+	}
+	tests := []struct {
+		name string
+		args args
+		want []Job
+	}{
+		{"empty list", args{emptyList}, emptyList},
+		{"one job", args{oneJob}, oneJob},
+		{"two jobs", args{twoJobs}, oneJob},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := KeepOldestOnly(tt.args.jobs); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("KeepOldestOnly() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
 
 func TestKeepSuccessOnly(t *testing.T) {
-	t.Run("test empty list", func(t *testing.T) {
-		var jobs []Job
-		if len(KeepSuccessOnly(jobs)) != 0 {
-			t.Error("empty list failed")
-		}
-	})
-	t.Run("test functionality", func(t *testing.T) {
-		var jobs []Job
-		jobs = append(jobs, Job{Name: "a", Timestamp: 10, Success: true})
-		jobs = append(jobs, Job{Name: "b", Timestamp: 20, Success: false})
-		if len(KeepSuccessOnly(jobs)) != 1 || jobs[0].Name != "a" {
-			t.Error("functionality failed")
-		}
-	})
+	emptyList := []Job{}
+	oneJob := []Job{{Name: "a", Timestamp: 10, Success: true}}
+	twoJobs := []Job{
+		{Name: "a", Timestamp: 10, Success: true},
+		{Name: "a", Timestamp: 5, Success: false},
+	}
+	type args struct {
+		jobs []Job
+	}
+	tests := []struct {
+		name       string
+		args       args
+		wantResult []Job
+	}{
+		{"empty list", args{emptyList}, emptyList},
+		{"one job", args{oneJob}, oneJob},
+		{"two jobs", args{twoJobs}, oneJob},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotResult := KeepSuccessOnly(tt.args.jobs); !reflect.DeepEqual(gotResult, tt.wantResult) {
+				t.Errorf("KeepSuccessOnly() = %v, want %v", gotResult, tt.wantResult)
+			}
+		})
+	}
 }
