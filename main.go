@@ -8,13 +8,17 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
+)
+
+const (
+	spoolFileName = "bareos-zabbix-check.spool"
 )
 
 func main() {
 	var (
 		config        config.Config
-		spool         spool.Spool
 		errorString   string
 		missingString string
 	)
@@ -58,14 +62,24 @@ func main() {
 	// We will check for errors in loading the spool file only at the end. If all jobs ran successfully without errors
 	// in the state file and we manage to write a new spool file without errors, then we will ignore any error here to
 	// avoid false positives during backup bootstrap
-	err = spool.Load(&config)
+	// Open the spool file
+	spoolFile, spoolErr := os.Open(filepath.Join(config.WorkDir(), spoolFileName))
+	var spoolJobs []job.Job
+	if err == nil {
+		defer spoolFile.Close()
+		spoolJobs, spoolErr = spool.Parse(spoolFile)
+	}
 
-	jobs = job.KeepOldestOnly(append(jobs, spool.Jobs()...))
-	spool.SetJobs(job.KeepSuccessOnly(jobs))
+	jobs = job.KeepOldestOnly(append(jobs, spoolJobs...))
 
 	// we write this new spool
-	if err2 := spool.Save(); err2 != nil {
-		fmt.Printf("AVERAGE: Error saving the spool file : %s\n", err2)
+	spoolFile, err = os.Create(filepath.Join(config.WorkDir(), spoolFileName))
+	if err == nil {
+		defer spoolFile.Close()
+		err = spool.Serialize(spoolFile, jobs)
+	}
+	if err != nil {
+		fmt.Printf("AVERAGE: Error saving the spool file : %s\n", err)
 		os.Exit(0)
 	}
 
@@ -91,8 +105,8 @@ func main() {
 	// Finally we output
 	if errorString != "" || missingString != "" {
 		fmt.Printf("AVERAGE: %s %s", errorString, missingString)
-		if err != nil {
-			fmt.Printf(" additionnal errors: %s", err)
+		if spoolErr != nil {
+			fmt.Printf(" additionnal errors: %s", spoolErr)
 		}
 	} else {
 		fmt.Printf("OK")
