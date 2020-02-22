@@ -2,14 +2,19 @@ package state
 
 import (
 	"bareos-zabbix-check/job"
+	"bareos-zabbix-check/utils"
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"log"
-	"os"
+	"io"
 	"regexp"
 	"time"
+
+	"github.com/pkg/errors"
 )
+
+// maxnameLength : the maximum length of a job name, hardcoded in bareos
+const maxNameLength = 128
 
 // jobLength : the length of the job result struct
 const jobLength = 16 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 8 + 8 + 8 + maxNameLength
@@ -19,7 +24,7 @@ var jobNameRegex = regexp.MustCompilePOSIX(`^([-A-Za-z0-9_]+)\.[0-9]{4}-[0-9]{2}
 // jobEntry : A structure to hold a job result from the state file
 // This comes from bareos repository file core/src/lib/recent_job_results_list.h:29 and file core/src/lib/recent_job_results_list.cc:44
 type jobEntry struct {
-	Pad            [16]byte
+	_              [16]byte
 	Errors         int32
 	JobType        int32
 	JobStatus      int32
@@ -36,7 +41,7 @@ type jobEntry struct {
 
 func (je jobEntry) String() string {
 	var matches = jobNameRegex.FindSubmatchIndex(je.Job[:])
-	var jobNameLen int
+	jobNameLen := utils.Clen(je.Job[:])
 	if len(matches) >= 4 {
 		jobNameLen = matches[3]
 	}
@@ -44,27 +49,20 @@ func (je jobEntry) String() string {
 		je.Errors, je.JobType, je.JobStatus, je.JobLevel, je.JobID, je.VolSessionID, je.VolSessionTime, je.JobFiles, je.JobBytes, time.Unix(int64(je.StartTime), 0), time.Unix(int64(je.EndTime), 0), je.Job[:jobNameLen])
 }
 
-func (s *State) parseJobs(file *os.File) (err error) {
-	// We seek to the jobs position in the state file
-	file.Seek(int64(s.header.LastJobsAddr), 0)
-
+// ParseJobs parses the jobs in a state file
+func ParseJobs(handle io.Reader) (jobs []job.Job, err error) {
 	// We read how many jobs there are in the state file
-	n, data, err := s.readNextBytes(file, 4)
+	data := make([]byte, 4)
+	n, err := handle.Read(data)
 	if err != nil {
-		return fmt.Errorf("INFO Corrupted state file : %s", err)
+		return nil, errors.Wrap(err, "Corrupted state file")
 	}
 	if n != 4 {
-		return fmt.Errorf("INFO Corrupted state file : invalid numberOfJobs read length in %s", s.config.StateFile())
+		return nil, fmt.Errorf("Corrupted state file : invalid numberOfJobs read length")
 	}
 	buffer := bytes.NewBuffer(data)
 	var numberOfJobs uint32
-	err = binary.Read(buffer, binary.LittleEndian, &numberOfJobs)
-	if err != nil {
-		return fmt.Errorf("INFO Corrupted state file : binary.Read failed on numberOfJobs in %s : %s", s.config.StateFile(), err)
-	}
-	if s.config.Verbose() {
-		log.Printf("%d jobs found in state file\n", numberOfJobs)
-	}
+	_ = binary.Read(buffer, binary.LittleEndian, &numberOfJobs) // this call cannot fail since we checked the header length
 
 	// We parse the job entries
 	for ; numberOfJobs > 0; numberOfJobs-- {
@@ -72,31 +70,26 @@ func (s *State) parseJobs(file *os.File) (err error) {
 			jobResult jobEntry
 			jobName   string
 		)
-		n, data, err = s.readNextBytes(file, jobLength)
+		data := make([]byte, jobLength)
+		n, err = handle.Read(data)
 		if err != nil {
-			return fmt.Errorf("INFO Corrupted state file : %s", err)
+			return nil, errors.Wrap(err, "Corrupted state file")
 		}
 		if n != jobLength {
-			return fmt.Errorf("INFO Corrupted state file : invalid job entry in %s", s.config.StateFile())
+			return nil, fmt.Errorf("Corrupted state file : invalid job entry")
 		}
 		buffer = bytes.NewBuffer(data)
-		err = binary.Read(buffer, binary.LittleEndian, &jobResult)
-		if err != nil {
-			return fmt.Errorf("INFO Corrupted state file : binary.Read failed on job entry in %s : %s", s.config.StateFile(), err)
-		}
+		_ = binary.Read(buffer, binary.LittleEndian, &jobResult) // this call cannot fail since we checked the header length
 		matches := jobNameRegex.FindSubmatchIndex(jobResult.Job[:])
 		if len(matches) >= 4 {
 			jobName = string(jobResult.Job[:matches[3]])
 		} else {
-			return fmt.Errorf("INFO Couldn't parse job name, this shouldn't happen : %s", jobResult.Job[:])
-		}
-		if s.config.Verbose() {
-			log.Printf("Parsed job entry: %s\n", jobResult)
+			return nil, fmt.Errorf("Couldn't parse job name, this shouldn't happen : %s", jobResult.Job[:])
 		}
 		// If the job is of type backup (B == ascii 66)
 		if jobResult.JobType == 66 {
 			// If the job is of status success JobStatus is equals to 84 (T == ascii 84)
-			s.jobs = append(s.jobs, job.Job{Name: jobName, Timestamp: jobResult.StartTime, Success: jobResult.JobStatus == 84})
+			jobs = append(jobs, job.Job{Name: jobName, Timestamp: jobResult.StartTime, Success: jobResult.JobStatus == 84})
 		}
 	}
 	return
