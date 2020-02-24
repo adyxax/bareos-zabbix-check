@@ -9,8 +9,13 @@ func TestKeepOldestOnly(t *testing.T) {
 	emptyList := []Job{}
 	oneJob := []Job{{Name: "a", Timestamp: 10, Success: true}}
 	twoJobs := []Job{
-		{Name: "a", Timestamp: 10, Success: true},
 		{Name: "a", Timestamp: 5, Success: true},
+		{Name: "a", Timestamp: 10, Success: true},
+	}
+	threeJobs := []Job{
+		{Name: "a", Timestamp: 5, Success: true},
+		{Name: "a", Timestamp: 10, Success: true},
+		{Name: "a", Timestamp: 8, Success: false},
 	}
 	type args struct {
 		jobs []Job
@@ -20,9 +25,10 @@ func TestKeepOldestOnly(t *testing.T) {
 		args args
 		want []Job
 	}{
-		{"empty list", args{emptyList}, emptyList},
+		{"empty list", args{emptyList}, nil},
 		{"one job", args{oneJob}, oneJob},
 		{"two jobs", args{twoJobs}, oneJob},
+		{"three jobs", args{threeJobs}, oneJob},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

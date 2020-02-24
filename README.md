@@ -43,8 +43,6 @@ The common way to run this check is without any argument :
 
 There are several flags available if you need to override the defaults :
   - -f string : Force the state file to use, defaults to bareos-fd.9102.state if it exists else bacula-fd.9102.state.
-  - -q bool : Suppress all output, suitable to force a silent update of the spool file.
-  - -v bool : Activates verbose debugging output, defaults to false.
   - -w string : Force the work directory to use, defaults to /var/lib/bareos if it exists else /var/lib/bacula.
 
 ## Output

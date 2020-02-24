@@ -1,4 +1,4 @@
 .*.sw[a-p]
 bareos-zabbix-check
 bareos-zabbix-check.spool
-*.state
+zabbix/tmp
