@@ -19,7 +19,7 @@ outerLoop:
 		}
 		results = append(results, job)
 	}
-	return 
+	return
 }
 
 // KeepSuccessOnly returns only the successful jobs from a job list (suiatble to write a new spool file)
