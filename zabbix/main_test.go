@@ -2,6 +2,7 @@ package zabbix
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -13,6 +14,10 @@ func TestMain(t *testing.T) {
 	err := os.MkdirAll("tmp/ok-18.2", 0777)
 	if err != nil {
 		t.Skipf("skipping main tests because tmp directory cannot be created : %s", err)
+	}
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Skipf("skipping main tests because cannot get working directory : %s", err)
 	}
 	os.MkdirAll("tmp/ok-17.2", 0777)
 	os.MkdirAll("tmp/no_state_file", 0777)
@@ -32,9 +37,9 @@ func TestMain(t *testing.T) {
 		{"failed bacula_auto_detect", 0, "tmp/bacula_auto_detect_failed", []string{}, "INFO Failed to init programm : Could not find a suitable state file. Has a job ever run?"},
 		{"failed bareos_auto_detect", 0, "tmp/bareos_auto_detect_failed", []string{}, "INFO Failed to init programm : Could not find a suitable state file. Has a job ever run?"},
 		{"failed auto_detect", 0, "tmp/non_existent", []string{}, "INFO Failed to init programm : Could not find a suitable work directory. Is bareos or bacula installed?"},
-		{"no work directory", 0, "tmp", []string{"-w", "/non_existent"}, "INFO Failed to init programm : Invalid work directory /home/julien/git/awh/bareos-zabbix-check/zabbix/tmp/non_existent : it does not exist or is not a directory"},
+		{"no work directory", 0, "tmp", []string{"-w", "/non_existent"}, fmt.Sprintf("INFO Failed to init programm : Invalid work directory %s/zabbix/tmp/non_existent : it does not exist or is not a directory", wd)},
 		{"no state file auto_detect", 0, "tmp", []string{"-w", "/no_state_file"}, "INFO Failed to init programm : Could not find a suitable state file. Has a job ever run?"},
-		{"no state file", 0, "tmp", []string{"-w", "/no_state_file", "-f", "test"}, "INFO Failed to init programm : The state file /home/julien/git/awh/bareos-zabbix-check/zabbix/tmp/no_state_file/test does not exist"},
+		{"no state file", 0, "tmp", []string{"-w", "/no_state_file", "-f", "test"}, fmt.Sprintf("INFO Failed to init programm : The state file %s/zabbix/tmp/no_state_file/test does not exist", wd},
 		{"ok bareos 18.2", 1582579731, "tmp/ok-18.2", []string{"-w", "/", "-f", "state"}, "OK"},
 		{"ok bareos 17.2", 1582579731, "tmp/ok-17.2", []string{"-w", "/", "-f", "state"}, "OK"},
 		{"missing", 1582709331, "tmp/ok-18.2", []string{"-w", "/", "-f", "state"}, "AVERAGE:  missing: awhphpipam1_percona_xtrabackup, awhphpipam1_LinuxAll, awhphpipam1_www"},
