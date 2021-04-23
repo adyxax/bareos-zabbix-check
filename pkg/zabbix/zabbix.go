@@ -1,13 +1,14 @@
 package zabbix
 
 import (
-	"bareos-zabbix-check/job"
-	"bareos-zabbix-check/spool"
-	"bareos-zabbix-check/state"
 	"fmt"
 	"os"
 	"path/filepath"
 	"time"
+
+	"git.adyxax.org/adyxax/bareos-zabbix-check/pkg/job"
+	"git.adyxax.org/adyxax/bareos-zabbix-check/pkg/spool"
+	"git.adyxax.org/adyxax/bareos-zabbix-check/pkg/state"
 )
 
 const (

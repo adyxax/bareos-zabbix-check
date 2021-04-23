@@ -1,12 +1,13 @@
 package spool
 
 import (
-	"bareos-zabbix-check/job"
 	"bytes"
 	"io"
 	"reflect"
 	"testing"
 	"testing/iotest"
+
+	"git.adyxax.org/adyxax/bareos-zabbix-check/pkg/job"
 )
 
 func TestParse(t *testing.T) {

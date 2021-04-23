@@ -1,9 +1,10 @@
 package spool
 
 import (
-	"bareos-zabbix-check/job"
 	"bytes"
 	"testing"
+
+	"git.adyxax.org/adyxax/bareos-zabbix-check/pkg/job"
 )
 
 func TestSerialize(t *testing.T) {

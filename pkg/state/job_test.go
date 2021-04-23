@@ -1,11 +1,12 @@
 package state
 
 import (
-	"bareos-zabbix-check/job"
 	"bytes"
 	"io"
 	"reflect"
 	"testing"
+
+	"git.adyxax.org/adyxax/bareos-zabbix-check/pkg/job"
 )
 
 func Test_jobEntry_String(t *testing.T) {

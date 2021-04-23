@@ -3,8 +3,9 @@
 package main
 
 import (
-	"bareos-zabbix-check/zabbix"
 	"fmt"
+
+	"git.adyxax.org/adyxax/bareos-zabbix-check/pkg/zabbix"
 )
 
 func main() {

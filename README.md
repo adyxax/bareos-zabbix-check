@@ -15,7 +15,7 @@ This program was born from a need to query the status of the backups from the cl
 
 ## Dependencies
 
-go is required. Only go version >= 1.13.5 on linux amd64 has been tested.
+go is required. Only go version >= 1.16 on linux amd64 has been tested.
 
 ## Building
 
@@ -26,12 +26,12 @@ go test -cover ./...
 
 For a debug build, use :
 ```
-go build
+go build ./cmd/bareos-zabbix-check/
 ```
 
 For a release build, use :
 ```
-go build -ldflags="-s -w"
+go build -ldflags="-s -w" ./cmd/bareos-zabbix-check/
 ```
 
 ## Usage

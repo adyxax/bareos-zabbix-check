@@ -1,8 +1,6 @@
 package state
 
 import (
-	"bareos-zabbix-check/job"
-	"bareos-zabbix-check/utils"
 	"bytes"
 	"encoding/binary"
 	"fmt"
@@ -10,6 +8,8 @@ import (
 	"regexp"
 	"time"
 
+	"git.adyxax.org/adyxax/bareos-zabbix-check/pkg/job"
+	"git.adyxax.org/adyxax/bareos-zabbix-check/pkg/utils"
 	"github.com/pkg/errors"
 )
 

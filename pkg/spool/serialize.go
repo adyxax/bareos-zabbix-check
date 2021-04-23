@@ -1,10 +1,11 @@
 package spool
 
 import (
-	"bareos-zabbix-check/job"
 	"encoding/csv"
 	"fmt"
 	"io"
+
+	"git.adyxax.org/adyxax/bareos-zabbix-check/pkg/job"
 )
 
 // Serialize writes a spool on the disk

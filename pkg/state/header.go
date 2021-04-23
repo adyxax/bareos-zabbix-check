@@ -1,12 +1,12 @@
 package state
 
 import (
-	"bareos-zabbix-check/utils"
 	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
 
+	"git.adyxax.org/adyxax/bareos-zabbix-check/pkg/utils"
 	"github.com/pkg/errors"
 )
 

@@ -1,11 +1,11 @@
 package spool
 
 import (
-	"bareos-zabbix-check/job"
 	"encoding/csv"
 	"io"
 	"strconv"
 
+	"git.adyxax.org/adyxax/bareos-zabbix-check/pkg/job"
 	"github.com/pkg/errors"
 )
 
