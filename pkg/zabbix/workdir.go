@@ -29,7 +29,7 @@ func checkWorkDir() error {
 			workDir = filepath.Join(root, baculaWorkDir)
 			info, err := os.Stat(workDir)
 			if os.IsNotExist(err) || !info.IsDir() {
-				return fmt.Errorf("Could not find a suitable work directory. Is bareos or bacula installed?")
+				return fmt.Errorf("Could not autodetect a suitable work directory. Is bareos or bacula installed?")
 			}
 		}
 	}

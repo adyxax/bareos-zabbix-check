@@ -15,18 +15,18 @@ func checkStateFile() error {
 	// Finds the state file to parse
 	if stateFileName != "" {
 		stateFileName = filepath.Join(workDir, stateFileName)
-		info, err := os.Stat(stateFileName)
-		if os.IsNotExist(err) || info.IsDir() {
-			return fmt.Errorf("The state file %s does not exist", stateFileName)
+		_, err := os.Stat(stateFileName)
+		if err != nil {
+			return fmt.Errorf("Could not open state file %s", stateFileName)
 		}
 	} else {
 		stateFileName = filepath.Join(workDir, bareosStateFile)
-		info, err := os.Stat(stateFileName)
-		if os.IsNotExist(err) || info.IsDir() {
+		_, err := os.Stat(stateFileName)
+		if err != nil {
 			stateFileName = filepath.Join(workDir, baculaStateFile)
-			info, err = os.Stat(stateFileName)
-			if os.IsNotExist(err) || info.IsDir() {
-				return fmt.Errorf("Could not find a suitable state file. Has a job ever run?")
+			_, err = os.Stat(stateFileName)
+			if err != nil {
+				return fmt.Errorf("Could not autodetect a suitable state file. Has a job ever run? Does the user you are running the check as has read access to bacula or bareos' /var/lib directory? Alternatively use the -w and -f flags to specify the work directory and state file to use.")
 			}
 		}
 	}
