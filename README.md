@@ -66,7 +66,7 @@ Here is a list of the possible error messages and their meaning :
 
 ## Spool file
 
-Stored in `/var/lib/bareos/bareos-zabbix-check.spool`, this spool data is a simple csv vile format where every line contains a job name and the timestamp of the last successful execution for this job.
+Stored in `/var/lib/bareos/bareos-zabbix-check.spool` by default, this spool data is a simple csv vile format where every line contains a job name and the timestamp of the last successful execution for this job.
 
 ## Limitations
 
@@ -87,5 +87,5 @@ Because of the way we record jobs in a spool file in order to track missing jobs
   - delete the bareos file daemon status file (/var/lib/bareos/bareos-fd.9102.state by default)
   - start the bareos file daemon again
   - run any job in order to have the file daemon recreate a valid status file
-  - delete the line referencing this job in the spool file (/var/lib/bareos/bareos-zabbix-check.spool by default)
+  - delete the line referencing the job you removed in the spool file (/var/lib/bareos/bareos-zabbix-check.spool by default)
 
