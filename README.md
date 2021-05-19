@@ -55,9 +55,9 @@ Here is a list of the possible error messages and their meaning :
   - `AVERAGE: errors:%s missing:%s additionnal errors: %s` : there are backup errors or missing jobs.
   - `AVERAGE: Couldn't save spool : %s` : the program could not save its spool file in the work directory.
   - `INFO Invalid work directory %s : it does not exist or is not a directory.` : you manually specified a work directory with the `-w` flag and it is invalid.
-  - `INFO Could not find a suitable work directory. Is bareos or bacula installed?` : neither /var/lib/bareos nor /var/lib/bacula seem to exist.
+  - `INFO Could not autodetect a suitable work directory. Is bareos or bacula installed?` : neither /var/lib/bareos nor /var/lib/bacula seem to exist.
   - `INFO The state file %s does not exist.\n` : you manually specified a state file with the `-f` flag and it is invalid or does not exist in the working directory.
-  - `INFO Could not find a suitable state file. Has a job ever run?` : neither bareos-fd.9102.state nor bacula-fd.9102.state seem to exist in the working directory.
+  - `INFO Could not autodetect a suitable state file. Has a job ever run? Does the user you are running the check as has read access to bacula or bareos' /var/lib directory? Alternatively use the -w and -f flags to specify t      he work directory and state file to use.` : neither bareos-fd.9102.state nor bacula-fd.9102.state seem to exist in the default working directory.
   - `INFO Couldn't open state file : %s` : the bacula or bareos state file could not be opened.
   - `INFO Invalid state file : This script only supports bareos state file version 4, got %d` : The bacula or bareos version installed is not supported (yet!).
   - `INFO Corrupted state file : %s` : the bacula or bareos state file could not be parsed.
