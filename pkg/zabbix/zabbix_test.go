@@ -34,12 +34,12 @@ func TestMain(t *testing.T) {
 		args      []string
 		want      string
 	}{
-		{"failed bacula_auto_detect", 0, "tmp/bacula_auto_detect_failed", []string{}, "INFO Failed to init programm : Could not autodetect a suitable state file. Has a job ever run? Does the user you are running the check as has read access to bacula or bareos' /var/lib directory? Alternatively use the -w and -f flags to specify the work directory and state file to use."},
-		{"failed bareos_auto_detect", 0, "tmp/bareos_auto_detect_failed", []string{}, "INFO Failed to init programm : Could not autodetect a suitable state file. Has a job ever run? Does the user you are running the check as has read access to bacula or bareos' /var/lib directory? Alternatively use the -w and -f flags to specify the work directory and state file to use."},
-		{"failed auto_detect", 0, "tmp/non_existent", []string{}, "INFO Failed to init programm : Could not autodetect a suitable work directory. Is bareos or bacula installed?"},
-		{"no work directory", 0, "tmp", []string{"-w", "/non_existent"}, fmt.Sprintf("INFO Failed to init programm : Invalid work directory %s/tmp/non_existent : it does not exist or is not a directory", wd)},
-		{"no state file auto_detect", 0, "tmp", []string{"-w", "/no_state_file"}, "INFO Failed to init programm : Could not autodetect a suitable state file. Has a job ever run? Does the user you are running the check as has read access to bacula or bareos' /var/lib directory? Alternatively use the -w and -f flags to specify the work directory and state file to use."},
-		{"no state file", 0, "tmp", []string{"-w", "/no_state_file", "-f", "test"}, fmt.Sprintf("INFO Failed to init programm : Could not open state file %s/tmp/no_state_file/test", wd)},
+		{"failed bacula_auto_detect", 0, "tmp/bacula_auto_detect_failed", []string{}, "INFO Failed to init program : Could not autodetect a suitable state file. Has a job ever run? Does the user you are running the check as has read access to bacula or bareos' /var/lib directory? Alternatively use the -w and -f flags to specify the work directory and state file to use."},
+		{"failed bareos_auto_detect", 0, "tmp/bareos_auto_detect_failed", []string{}, "INFO Failed to init program : Could not autodetect a suitable state file. Has a job ever run? Does the user you are running the check as has read access to bacula or bareos' /var/lib directory? Alternatively use the -w and -f flags to specify the work directory and state file to use."},
+		{"failed auto_detect", 0, "tmp/non_existent", []string{}, "INFO Failed to init program : Could not autodetect a suitable work directory. Is bareos or bacula installed?"},
+		{"no work directory", 0, "tmp", []string{"-w", "/non_existent"}, fmt.Sprintf("INFO Failed to init program : Invalid work directory %s/tmp/non_existent : it does not exist or is not a directory", wd)},
+		{"no state file auto_detect", 0, "tmp", []string{"-w", "/no_state_file"}, "INFO Failed to init program : Could not autodetect a suitable state file. Has a job ever run? Does the user you are running the check as has read access to bacula or bareos' /var/lib directory? Alternatively use the -w and -f flags to specify the work directory and state file to use."},
+		{"no state file", 0, "tmp", []string{"-w", "/no_state_file", "-f", "test"}, fmt.Sprintf("INFO Failed to init program : Could not open state file %s/tmp/no_state_file/test", wd)},
 		{"ok bareos 18.2", 1582579731, "tmp/ok-18.2", []string{"-w", "/", "-f", "state"}, "OK"},
 		{"ok bareos 17.2", 1582579731, "tmp/ok-17.2", []string{"-w", "/", "-f", "state"}, "OK"},
 		{"missing", 1582709331, "tmp/ok-18.2", []string{"-w", "/", "-f", "state"}, "AVERAGE:  missing: awhphpipam1_percona_xtrabackup, awhphpipam1_LinuxAll, awhphpipam1_www"},

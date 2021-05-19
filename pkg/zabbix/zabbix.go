@@ -21,7 +21,7 @@ var now = uint64(time.Now().Unix())
 func Main() string {
 	err := processFlags()
 	if err != nil {
-		return fmt.Sprintf("INFO Failed to init programm : %s", err)
+		return fmt.Sprintf("INFO Failed to init program : %s", err)
 	}
 	// Open the state file
 	stateFile, err := os.Open(stateFileName)
