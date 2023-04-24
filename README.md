@@ -15,7 +15,7 @@ This program was born from a need to query the status of the backups from the cl
 
 ## Dependencies
 
-go is required. Only go version >= 1.16 on linux amd64 has been tested.
+go is required. While developed on go version 1.16, only go version >= 1.20 on linux amd64 is being regularly tested.
 
 ## Building
 
